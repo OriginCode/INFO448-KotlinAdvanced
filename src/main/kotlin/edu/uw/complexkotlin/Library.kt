@@ -3,13 +3,39 @@
  */
 package edu.uw.complexkotlin
 
+import kotlin.text.toUpperCase
+
 // write a lambda using map and fold to solve "FIZZBUZZ" for the first fifteen numbers (0..15).
 // use map() to return a list with "", "FIZZ" (for 3s) or "BUZZ" (for 5s).
 // use fold() to compress the array of strings down into a single string.
 // the final string should look like FIZZBUZZFIZZFIZZBUZZFIZZFIZZBUZZ for 0..15.
 // store this lambda into 'fizzbuzz' so that the tests can call it
 //
-val fizzbuzz : (IntRange) -> String = { "" }
+val fizzbuzz : (IntRange) -> String = {
+    nums -> nums.map {
+        mapOf(3 to "FIZZ", 5 to "BUZZ").asIterable().fold("") { acc, (n, s) -> 
+            if (it % n == 0) acc + s else acc
+        }
+    }.fold("", String::plus) 
+}
+
+val fizzbuzzdoh : (IntRange) -> String = {
+    nums -> nums.map {
+        mapOf(3 to "FIZZ", 5 to "BUZZ", 7 to "DOH!").asIterable().fold("") { acc, (n, s) -> 
+            if (it % n == 0) acc + s else acc
+        }
+    }.fold("", String::plus) 
+}
+
+val fizzbuzzgen : (Map<Int, String>) -> (IntRange) -> String = {
+    divStr -> {
+        nums: IntRange -> nums.map {
+            divStr.asIterable().fold("") { acc, (n, s) ->
+                if (it % n == 0) acc + s else acc
+            }
+        }.fold("", String::plus) 
+    }
+}
 
 // Example usage
 /*
@@ -19,7 +45,8 @@ if (fizzbuzz(1..3) == "FIZZ")
     println("Success!")
 if (fizzbuzz(1..5) == "FIZZBUZZ")
     println("Success!")
-*/
+ */
+
 
 // This is a utility function for your use as you choose, and as an
 // example of an extension method
@@ -34,16 +61,31 @@ fun process(message: String, block: (String) -> String): String {
     return ">>> ${message}: {" + block(message) + "}"
 }
 // Create r1 as a lambda that calls process() with message "FOO" and a block that returns "BAR"
-val r1 = { }
+val r1 = { process("FOO") { "BAR" } }
 
 // Create r2 as a lambda that calls process() with message "FOO" and a block that upper-cases 
 // r2_message, and repeats it three times with no spaces: "WOOGAWOOGAWOOGA"
 val r2_message = "wooga"
-val r2 = { }
+val r2 = {
+    process("FOO") {
+        (1..3).fold("") { acc, _ -> acc + r2_message }
+                .toUpperCase()
+    }
+}
 
 
 // write an enum-based state machine between talking and thinking
-enum class Philosopher { }
+enum class Philosopher {
+    THINKING {
+        override fun signal() = TALKING
+        override fun toString() = "Deep thoughts...."
+    },
+    TALKING {
+        override fun signal() = THINKING
+        override fun toString() = "Allow me to suggest an idea..."
+    };
+    abstract fun signal(): Philosopher
+}
 
 // create an class "Command" that can be used as a function.
 // To do this, provide an "invoke()" function that takes a 
@@ -55,4 +97,6 @@ enum class Philosopher { }
 // val cmd = Command(": ")
 // val result = cmd("Hello!")
 // result should equal ": Hello!"
-class Command(val prompt: String) { }
+class Command(val prompt: String) { 
+    operator fun invoke(message: String): String = prompt + message
+}
