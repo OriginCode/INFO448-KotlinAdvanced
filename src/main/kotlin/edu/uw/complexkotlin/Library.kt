@@ -19,14 +19,16 @@ val fizzbuzz : (IntRange) -> String = {
     }.fold("", String::plus) 
 }
 
+// Extra Credit 2
 val fizzbuzzdoh : (IntRange) -> String = {
     nums -> nums.map {
-        mapOf(3 to "FIZZ", 5 to "BUZZ", 7 to "DOH!").asIterable().fold("") { acc, (n, s) -> 
+        mapOf(7 to "DOH!", 3 to "FIZZ", 5 to "BUZZ").asIterable().fold("") { acc, (n, s) -> 
             if (it % n == 0) acc + s else acc
         }
     }.fold("", String::plus) 
 }
 
+// Extra Credit 3
 val fizzbuzzgen : (Map<Int, String>) -> (IntRange) -> String = {
     divStr -> {
         nums: IntRange -> nums.map {
@@ -86,6 +88,12 @@ enum class Philosopher {
     };
     abstract fun signal(): Philosopher
 }
+
+// Extra Credit 4
+// Seneca the Younger was an Ancient Rome philosopher who is
+// usually associated with the Stoic school. This school
+// believes that the practice of virtue is necessary to
+// achieve a good life.
 
 // create an class "Command" that can be used as a function.
 // To do this, provide an "invoke()" function that takes a 
